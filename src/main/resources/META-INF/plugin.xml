@@ -8,12 +8,23 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.toantk238.sampleintellijplugin.services.MyApplicationService"/>
+        <applicationService
+                serviceImplementation="com.github.toantk238.sampleintellijplugin.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.toantk238.sampleintellijplugin.services.MyProjectService"/>
     </extensions>
 
-    <applicationListeners>
-        <listener class="com.github.toantk238.sampleintellijplugin.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
+    <actions>
+        <action id="com.github.toantk238.sampleintellijplugin.edit.kotlin"
+                class="com.github.toantk238.sampleintellijplugin.actions.RenameKotlin"
+                text="Rename Class"
+                description="To rename class">
+            <add-to-group group-id="WindowMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt PERIOD"/>
+        </action>
+    </actions>
+
+<!--    <applicationListeners>-->
+<!--        <listener class="com.github.toantk238.sampleintellijplugin.listeners.MyProjectManagerListener"-->
+<!--                  topic="com.intellij.openapi.project.ProjectManagerListener"/>-->
+<!--    </applicationListeners>-->
 </idea-plugin>

@@ -7,9 +7,10 @@ plugins {
     // Java support
     id("java")
     // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version "1.4.20"
+    id("org.jetbrains.kotlin.jvm") version "1.3.72"
+    id("org.jetbrains.kotlin.kapt") version "1.3.72"
     // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
-    id("org.jetbrains.intellij") version "0.6.4"
+    id("org.jetbrains.intellij") version "0.6.5"
     // gradle-changelog-plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
     id("org.jetbrains.changelog") version "0.6.2"
     // detekt linter - read more: https://detekt.github.io/detekt/gradle.html
@@ -45,19 +46,21 @@ repositories {
 }
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.14.2")
+    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.3.72")
 }
 
 // Configure gradle-intellij-plugin plugin.
 // Read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
     pluginName = pluginName_
-    version = platformVersion
+//    version = platformVersion
     type = platformType
     downloadSources = platformDownloadSources.toBoolean()
     updateSinceUntilBuild = true
 
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
     setPlugins(*platformPlugins.split(',').map(String::trim).filter(String::isNotEmpty).toTypedArray())
+    localPath = "/home/freesky1102/ProgramFiles/android-studio"
 }
 
 // Configure detekt plugin.
@@ -96,24 +99,24 @@ tasks {
 
         // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
         pluginDescription(
-            closure {
-                File("./README.md").readText().lines().run {
-                    val start = "<!-- Plugin description -->"
-                    val end = "<!-- Plugin description end -->"
+                closure {
+                    File("./README.md").readText().lines().run {
+                        val start = "<!-- Plugin description -->"
+                        val end = "<!-- Plugin description end -->"
 
-                    if (!containsAll(listOf(start, end))) {
-                        throw GradleException("Plugin description section not found in README.md:\n$start ... $end")
-                    }
-                    subList(indexOf(start) + 1, indexOf(end))
-                }.joinToString("\n").run { markdownToHTML(this) }
-            }
+                        if (!containsAll(listOf(start, end))) {
+                            throw GradleException("Plugin description section not found in README.md:\n$start ... $end")
+                        }
+                        subList(indexOf(start) + 1, indexOf(end))
+                    }.joinToString("\n").run { markdownToHTML(this) }
+                }
         )
 
         // Get the latest available change notes from the changelog file
         changeNotes(
-            closure {
-                changelog.getLatest().toHTML()
-            }
+                closure {
+                    changelog.getLatest().toHTML()
+                }
         )
     }
 
@@ -129,4 +132,11 @@ tasks {
         // https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/deployment.html#specifying-a-release-channel
         channels(pluginVersion.split('-').getOrElse(1) { "default" }.split('.').first())
     }
+}
+
+tasks.create<org.jetbrains.intellij.tasks.RunIdeTask>("runAndroidStudio") {
+    ideDirectory("/home/freesky1102/ProgramFiles/android-studio")
+    configDirectory("/home/freesky1102/.config/Google/AndroidStudio4.1")
+    systemDirectory("/home/freesky1102/.cache/Google/AndroidStudio4.1")
+//    pluginsDirectory("plugins/")
 }

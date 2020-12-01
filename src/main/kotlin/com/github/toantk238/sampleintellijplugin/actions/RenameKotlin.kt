@@ -15,8 +15,18 @@ class RenameKotlin : AnAction() {
 
         val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
         val editor = e.getData(CommonDataKeys.EDITOR) ?: return
-        if (psiFile !is KtFile) return
+        logger.info("ToanTK before cast object")
+        if (psiFile !is KtFile) {
+            logger.info("ToanTK this file isn't KtFile")
+            return
+        }
         val ktFile: KtFile = psiFile
+
+        try {
+            val node = ktFile.node
+        } catch (e: Exception) {
+            logger.info("ToanTK That ko Exception : ${e.message}")
+        }
 
 //        ktFile.accept(object : KtVisitorVoid() {
 //            override fun visitElement(element: PsiElement) {

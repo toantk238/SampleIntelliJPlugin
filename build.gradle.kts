@@ -46,7 +46,8 @@ repositories {
 }
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.14.2")
-    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.3.72")
+//    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.3.72")
+//    implementation("org.jetbrains.kotlin:kotlin-compiler:1.3.72")
 }
 
 // Configure gradle-intellij-plugin plugin.
@@ -132,11 +133,10 @@ tasks {
         // https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/deployment.html#specifying-a-release-channel
         channels(pluginVersion.split('-').getOrElse(1) { "default" }.split('.').first())
     }
-}
 
-tasks.create<org.jetbrains.intellij.tasks.RunIdeTask>("runAndroidStudio") {
-    ideDirectory("/home/freesky1102/ProgramFiles/android-studio")
-    configDirectory("/home/freesky1102/.config/Google/AndroidStudio4.1")
-    systemDirectory("/home/freesky1102/.cache/Google/AndroidStudio4.1")
-//    pluginsDirectory("plugins/")
+    runIde {
+        ideDirectory("/home/freesky1102/ProgramFiles/android-studio")
+        configDirectory("/home/freesky1102/.config/Google/AndroidStudio4.1")
+        systemDirectory("/home/freesky1102/.cache/Google/AndroidStudio4.1")
+    }
 }

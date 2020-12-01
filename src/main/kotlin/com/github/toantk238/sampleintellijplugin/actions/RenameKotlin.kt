@@ -5,6 +5,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
+import org.jetbrains.kotlin.psi.classRecursiveVisitor
 
 class RenameKotlin : AnAction() {
 
@@ -28,11 +30,17 @@ class RenameKotlin : AnAction() {
             logger.info("ToanTK That ko Exception : ${e.message}")
         }
 
-//        ktFile.accept(object : KtVisitorVoid() {
-//            override fun visitElement(element: PsiElement) {
-//                super.visitElement(element)
-//            }
-//        })
+        ktFile.accept(classRecursiveVisitor {
+            val name = it.name
+            val generics = it.getColon()?.nextSibling?.nextSibling?.children?.getOrNull(0)
+//                    as KtSuperTypeCallEntry?)?.typeArgumentList?.arguments
+
+            logger.info("ToanTK got Field Declaration: $name")
+//            val query = ClassInheritorsSearch.search(it)
+        })
+
+        val pos = editor.caretModel.offset
+        val temp = ktFile.findElementAt(pos)
 
 //        val project = e.project ?: return
 //        val tempFile = editingFile.toPsiFile(project)

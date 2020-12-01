@@ -4,11 +4,13 @@ import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    val kotlinVersion = "1.3.72"
+
     // Java support
     id("java")
     // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version "1.3.72"
-    id("org.jetbrains.kotlin.kapt") version "1.3.72"
+    id("org.jetbrains.kotlin.jvm") version kotlinVersion
+    id("org.jetbrains.kotlin.kapt") version kotlinVersion
     // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
     id("org.jetbrains.intellij") version "0.6.5"
     // gradle-changelog-plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
@@ -46,7 +48,7 @@ repositories {
 }
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.14.2")
-//    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.3.72")
+//    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.4.20")
 //    implementation("org.jetbrains.kotlin:kotlin-compiler:1.3.72")
 }
 
@@ -54,14 +56,14 @@ dependencies {
 // Read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
     pluginName = pluginName_
-//    version = platformVersion
+    version = platformVersion
     type = platformType
     downloadSources = platformDownloadSources.toBoolean()
     updateSinceUntilBuild = true
 
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
     setPlugins(*platformPlugins.split(',').map(String::trim).filter(String::isNotEmpty).toTypedArray())
-    localPath = "/home/freesky1102/ProgramFiles/android-studio"
+//    localPath = "/home/freesky1102/ProgramFiles/android-studio"
 }
 
 // Configure detekt plugin.

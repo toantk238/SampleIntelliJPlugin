@@ -46,7 +46,7 @@ class RenameKotlin : AnAction() {
         val newString = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, layoutFileName)
         val bindingClassName = "${newString}Binding"
 
-        val layoutBlock = PsiTreeUtil.findChildOfType(initFragmentToolProperty, KtFunctionLiteral::class.java)
+        val layoutBlock = PsiTreeUtil.findChildOfType(initFragmentToolProperty, KtLambdaExpression::class.java)
         val type = psiFactory.createExpression("${bindingClassName}::class.java")
         WriteCommandAction.runWriteCommandAction(project) {
             layoutBlock?.replace(type)

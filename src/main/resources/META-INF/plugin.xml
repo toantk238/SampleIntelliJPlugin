@@ -16,9 +16,9 @@
 
     <actions>
         <action id="com.github.toantk238.sampleintellijplugin.edit.kotlin"
-                class="com.github.toantk238.sampleintellijplugin.actions.RenameKotlin"
-                text="Rename Class"
-                description="To rename class">
+                class="com.github.toantk238.sampleintellijplugin.actions.RefactorFragmentKotlin"
+                text="Refactor Fragment"
+                description="To refactor Fragment">
             <add-to-group group-id="WindowMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt PERIOD"/>
         </action>

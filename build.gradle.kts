@@ -4,21 +4,21 @@ import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    val kotlinVersion = "1.3.72"
+    val kotlinVersion = "1.4.30"
 
     // Java support
     id("java")
     // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version kotlinVersion
+    kotlin("jvm") version kotlinVersion
     id("org.jetbrains.kotlin.kapt") version kotlinVersion
     // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
     id("org.jetbrains.intellij") version "0.6.5"
     // gradle-changelog-plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
-    id("org.jetbrains.changelog") version "0.6.2"
+    id("org.jetbrains.changelog") version "1.1.2"
     // detekt linter - read more: https://detekt.github.io/detekt/gradle.html
     id("io.gitlab.arturbosch.detekt") version "1.14.2"
     // ktlint linter - read more: https://github.com/JLLeitschuh/ktlint-gradle
-    id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
+    id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
     // dependency checker
     id("com.github.ben-manes.versions") version "0.36.0"
 }
@@ -50,6 +50,7 @@ dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.14.2")
 //    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.4.20")
 //    implementation("org.jetbrains.kotlin:kotlin-compiler:1.3.72")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 // Configure gradle-intellij-plugin plugin.
@@ -102,24 +103,24 @@ tasks {
 
         // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
         pluginDescription(
-                closure {
-                    File("./README.md").readText().lines().run {
-                        val start = "<!-- Plugin description -->"
-                        val end = "<!-- Plugin description end -->"
+            closure {
+                File("./README.md").readText().lines().run {
+                    val start = "<!-- Plugin description -->"
+                    val end = "<!-- Plugin description end -->"
 
-                        if (!containsAll(listOf(start, end))) {
-                            throw GradleException("Plugin description section not found in README.md:\n$start ... $end")
-                        }
-                        subList(indexOf(start) + 1, indexOf(end))
-                    }.joinToString("\n").run { markdownToHTML(this) }
-                }
+                    if (!containsAll(listOf(start, end))) {
+                        throw GradleException("Plugin description section not found in README.md:\n$start ... $end")
+                    }
+                    subList(indexOf(start) + 1, indexOf(end))
+                }.joinToString("\n").run { markdownToHTML(this) }
+            }
         )
 
         // Get the latest available change notes from the changelog file
         changeNotes(
-                closure {
-                    changelog.getLatest().toHTML()
-                }
+            closure {
+                changelog.getLatest().toHTML()
+            }
         )
     }
 
@@ -141,4 +142,12 @@ tasks {
         configDirectory("/home/freesky1102/.config/Google/AndroidStudio4.1")
         systemDirectory("/home/freesky1102/.cache/Google/AndroidStudio4.1")
     }
+}
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "1.8"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "1.8"
 }

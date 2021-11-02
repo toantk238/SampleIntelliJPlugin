@@ -31,11 +31,13 @@ version = properties("pluginVersion")
 repositories {
     mavenCentral()
     jcenter()
+    google()
 }
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.18.1")
 //    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.4.20")
 //    implementation("org.jetbrains.kotlin:kotlin-compiler:1.3.72")
+    compileOnly("com.android.tools.build:gradle:7.0.3")
 }
 
 // Configure gradle-intellij-plugin plugin.

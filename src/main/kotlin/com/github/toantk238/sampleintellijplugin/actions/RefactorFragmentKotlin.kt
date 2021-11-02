@@ -8,8 +8,14 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.android.facet.AndroidFacet
+import org.jetbrains.android.util.AndroidUtils
+import org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider
 import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -18,6 +24,8 @@ import org.jetbrains.kotlin.resolve.ImportPath
 class RefactorFragmentKotlin : AnAction() {
 
     private val logger by lazy { Logger.getInstance("ToanTK") }
+
+    private var virtualFile: VirtualFile? = null
 
     private lateinit var ktFile: KtFile
 
@@ -43,8 +51,9 @@ class RefactorFragmentKotlin : AnAction() {
         ktFile = psiFile
         psiFactory = KtPsiFactory(project)
 
-        val virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE)
-        val module = virtualFile?.getModule(project)
+        virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE)
+        testVirtualFiles()
+
 
         // Watch current caret element
         val pos = editor.caretModel.offset
@@ -55,6 +64,17 @@ class RefactorFragmentKotlin : AnAction() {
         updateGenericTypes()
         updateFuncSetupViews()
         convertAllVariablesFromLowerUnderscoreToCamelCase()
+
+        logger.info("ToanTK got Kt File done")
+    }
+
+    private fun testVirtualFiles() {
+        val module = virtualFile?.getModule(project) ?: return
+        val sourceProvider = AndroidModuleInfoProvider.getInstance(module)
+        val facet = AndroidFacet.getInstance(module)
+        val moduleManager = ModuleManager.getInstance(project)
+        val p = ProjectRootManager.getInstance(project)
+        AndroidUtils.getInstance()
 
         logger.info("ToanTK got Kt File done")
     }

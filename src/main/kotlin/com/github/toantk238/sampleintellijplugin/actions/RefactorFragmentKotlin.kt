@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -32,6 +33,7 @@ class RefactorFragmentKotlin : AnAction() {
         val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
         val editor = e.getData(CommonDataKeys.EDITOR) ?: return
         project = e.getData(CommonDataKeys.PROJECT) ?: return
+
         logger.info("ToanTK before cast object")
         if (psiFile !is KtFile) {
             logger.info("ToanTK this file isn't KtFile")
@@ -40,6 +42,9 @@ class RefactorFragmentKotlin : AnAction() {
 
         ktFile = psiFile
         psiFactory = KtPsiFactory(project)
+
+        val virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE)
+        val module = virtualFile?.getModule(project)
 
         // Watch current caret element
         val pos = editor.caretModel.offset
@@ -114,8 +119,10 @@ class RefactorFragmentKotlin : AnAction() {
     private fun convertAllVariablesFromLowerUnderscoreToCamelCase() {
         val allVariables = ktFile.findChildrenOfType(KtNameReferenceExpression::class.java)
         val underscoreVars = allVariables.filter func@{
-            val shouldAvoid = PsiTreeUtil.getParentOfType(it, KtPackageDirective::class.java,
-                    KtImportDirective::class.java) != null
+            val shouldAvoid = PsiTreeUtil.getParentOfType(
+                it, KtPackageDirective::class.java,
+                KtImportDirective::class.java
+            ) != null
             if (shouldAvoid) return@func false
 
             val itsText = it.text ?: ""

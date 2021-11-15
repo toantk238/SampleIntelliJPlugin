@@ -62,6 +62,8 @@ class RefactorFragmentKotlin : AnAction() {
 
         updateInitFragmentTools()
         addImportBindingClass()
+        deleteSyntheticImports()
+        updateImportBaseClass()
         updateGenericTypes()
         updateFuncSetupViews()
         convertAllVariablesFromLowerUnderscoreToCamelCase()
@@ -103,6 +105,26 @@ class RefactorFragmentKotlin : AnAction() {
         project.runWriteCommand {
             importElement.add(psiFactory.createNewLine())
             importElement.add(bindingImportElement)
+        }
+    }
+
+    private fun deleteSyntheticImports() {
+        val imports = ktFile.findChildrenOfType(KtImportDirective::class.java)
+        val kotlinImports = imports.filter { it.text.contains("kotlinx.android.synthetic") }
+        project.runWriteCommand {
+            kotlinImports.forEach { it.delete() }
+        }
+    }
+
+    private fun updateImportBaseClass() {
+        val imports = ktFile.findChildrenOfType(KtImportDirective::class.java)
+        val baseClassImport =
+            imports.filter { it.text.contains("com.mhealth.core.mvvm.BaseMVVMFragment") }.firstOrNull() ?: return
+        val newBaseClassPath = "com.mhealth.core.mvvm.v2.BaseMVVMFragment"
+        val importPath = ImportPath(FqName(newBaseClassPath), false, null)
+        val newImport = psiFactory.createImportDirective(importPath)
+        project.runWriteCommand {
+            baseClassImport.replace(newImport)
         }
     }
 

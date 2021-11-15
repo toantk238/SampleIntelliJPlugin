@@ -1,5 +1,6 @@
 package com.github.toantk238.sampleintellijplugin.actions
 
+import com.android.tools.idea.npw.project.getPackageForApplication
 import com.github.toantk238.sampleintellijplugin.util.findChildOfType
 import com.github.toantk238.sampleintellijplugin.util.findChildrenOfType
 import com.github.toantk238.sampleintellijplugin.util.runWriteCommand
@@ -12,9 +13,7 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.android.facet.AndroidFacet
-import org.jetbrains.android.util.AndroidUtils
 import org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider
 import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.name.FqName
@@ -34,6 +33,8 @@ class RefactorFragmentKotlin : AnAction() {
     private lateinit var bindingClassName: String
 
     private lateinit var project: Project
+
+    private var packageName: String = ""
 
     override fun actionPerformed(e: AnActionEvent) {
         logger.info("ToantK action performed")
@@ -74,7 +75,7 @@ class RefactorFragmentKotlin : AnAction() {
         val facet = AndroidFacet.getInstance(module)
         val moduleManager = ModuleManager.getInstance(project)
         val p = ProjectRootManager.getInstance(project)
-        AndroidUtils.getInstance()
+        packageName = facet?.getPackageForApplication() ?: ""
 
         logger.info("ToanTK got Kt File done")
     }
@@ -96,7 +97,7 @@ class RefactorFragmentKotlin : AnAction() {
     private fun addImportBindingClass() {
         val importElement = ktFile.findChildOfType(KtImportDirective::class.java) ?: return
 
-        val bindingClassPath = "com.base.databinding.$bindingClassName"
+        val bindingClassPath = "$packageName.databinding.$bindingClassName"
         val importPath = ImportPath(FqName(bindingClassPath), false, null)
         val bindingImportElement = psiFactory.createImportDirective(importPath)
         project.runWriteCommand {
@@ -106,7 +107,7 @@ class RefactorFragmentKotlin : AnAction() {
     }
 
     private fun updateInitFragmentTools() {
-        val properties = ktFile.findChildrenOfType(KtProperty::class.java)
+        val properties = ktFile.findChildrenOfType(KtFunction::class.java)
         val initFragmentToolProperty = properties.firstOrNull { it.name == "initFragmentTools" } ?: return
         val propertyText = initFragmentToolProperty.text
         val foundText = "R.layout."
@@ -116,9 +117,7 @@ class RefactorFragmentKotlin : AnAction() {
         val newString = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, layoutFileName)
         bindingClassName = "${newString}Binding"
 
-        val layoutBlock = initFragmentToolProperty.findChildOfType(KtLambdaExpression::class.java)
-        val bindClassExpression = psiFactory.createExpression("${bindingClassName}::class")
-        project.runWriteCommand { layoutBlock?.replace(bindClassExpression) }
+        project.runWriteCommand { initFragmentToolProperty.delete() }
     }
 
     private fun updateFuncSetupViews() {
@@ -137,24 +136,7 @@ class RefactorFragmentKotlin : AnAction() {
     }
 
     private fun convertAllVariablesFromLowerUnderscoreToCamelCase() {
-        val allVariables = ktFile.findChildrenOfType(KtNameReferenceExpression::class.java)
-        val underscoreVars = allVariables.filter func@{
-            val shouldAvoid = PsiTreeUtil.getParentOfType(
-                it, KtPackageDirective::class.java,
-                KtImportDirective::class.java
-            ) != null
-            if (shouldAvoid) return@func false
-
-            val itsText = it.text ?: ""
-            itsText.contains("_") &&
-                    itsText.toUpperCase() != itsText // avoid constant variables
-        }
-        underscoreVars.forEach { oldVar ->
-            val oldVarText = oldVar.text
-            val newVarText = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, oldVarText)
-            val newNameRefExpression = psiFactory.createExpression(newVarText)
-            project.runWriteCommand { oldVar.replace(newNameRefExpression) }
-            logger.info("ToanTK newVarText $newVarText")
-        }
+        val ktFileComponents = KtFileComponents(project, ktFile)
+        ktFileComponents.convertAllVariablesFromLowerUnderscoreToCamelCase()
     }
 }

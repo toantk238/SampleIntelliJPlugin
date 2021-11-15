@@ -9,8 +9,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.*
 
 class KtFileComponents(
-    val project: Project,
-    val ktFile: KtFile
+    private val project: Project,
+    private val ktFile: KtFile
 ) {
 
     private val logger by lazy { Logger.getInstance("ToanTK") }
@@ -19,23 +19,39 @@ class KtFileComponents(
 
     fun convertAllVariablesFromLowerUnderscoreToCamelCase() {
         val allVariables = ktFile.findChildrenOfType(KtNameReferenceExpression::class.java)
-        val underscoreVars = allVariables.filter func@{
-            val shouldAvoid = PsiTreeUtil.getParentOfType(
-                it, KtPackageDirective::class.java,
-                KtImportDirective::class.java
-            ) != null
-            if (shouldAvoid) return@func false
+        allVariables.forEach { convertVarToLowerCamel(it) }
+    }
 
-            val itsText = it.text ?: ""
-            itsText.contains("_") &&
-                    itsText.toUpperCase() != itsText // avoid constant variables
+    fun shouldAvoidAnElement(it: KtNameReferenceExpression): Boolean {
+        val insideImport = PsiTreeUtil.getParentOfType(
+            it, KtPackageDirective::class.java,
+            KtImportDirective::class.java
+        ) != null
+
+        if (insideImport) return true
+
+        val itsText = it.text ?: ""
+
+        if (!itsText.contains("_")) return true
+        if (itsText.toUpperCase() == itsText) return true // avoid constant variables
+
+        // Don't convert those references to Android resource ( R.layout, R.drawable, so on )
+        val dotParent = PsiTreeUtil.getParentOfType(it, KtDotQualifiedExpression::class.java)
+        if (dotParent != null) {
+            val dotParentText = dotParent.text
+            if (dotParentText.startsWith("R.") || dotParentText.contains(".R.")) return true
         }
-        underscoreVars.forEach { oldVar ->
-            val oldVarText = oldVar.text
-            val newVarText = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, oldVarText)
-            val newNameRefExpression = psiFactory.createExpression(newVarText)
-            project.runWriteCommand { oldVar.replace(newNameRefExpression) }
-            logger.info("ToanTK newVarText $newVarText")
-        }
+
+        return false
+    }
+
+    fun convertVarToLowerCamel(oldVar: KtNameReferenceExpression) {
+        if (shouldAvoidAnElement(oldVar)) return
+
+        val oldVarText = oldVar.text
+        val newVarText = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, oldVarText)
+        val newNameRefExpression = psiFactory.createExpression(newVarText)
+        project.runWriteCommand { oldVar.replace(newNameRefExpression) }
+        logger.info("ToanTK newVarText $newVarText")
     }
 }

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ImportPath
 
-class RefactorFragmentKotlin : AnAction() {
+class RefactorViewHolderKotlin : AnAction() {
 
     private val logger by lazy { Logger.getInstance("ToanTK") }
 
@@ -35,6 +35,10 @@ class RefactorFragmentKotlin : AnAction() {
     private lateinit var project: Project
 
     private var packageName: String = ""
+
+    private var layoutResName: String = ""
+
+    private var inputTypeClassName: String = ""
 
     override fun actionPerformed(e: AnActionEvent) {
         logger.info("ToantK action performed")
@@ -55,20 +59,51 @@ class RefactorFragmentKotlin : AnAction() {
         virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE)
         testVirtualFiles()
 
-
         // Watch current caret element
         val pos = editor.caretModel.offset
         val temp = ktFile.findElementAt(pos)
 
-        updateInitFragmentTools()
+        logger.info("ToanTK got Kt File done")
+//        updateInitFragmentTools()
+//        addImportBindingClass()
+//        deleteSyntheticImports()
+//        updateImportBaseClass()
+//        updateGenericTypes()
+//        updateFuncSetupViews()
+//        convertAllVariablesFromLowerUnderscoreToCamelCase()
+
+        findLayoutResName()
         addImportBindingClass()
         deleteSyntheticImports()
+        updateConstructor()
         updateImportBaseClass()
         updateGenericTypes()
-        updateFuncSetupViews()
+        updateFuncBindView()
         convertAllVariablesFromLowerUnderscoreToCamelCase()
+    }
 
-        logger.info("ToanTK got Kt File done")
+    private fun updateConstructor() {
+        val constructor = ktFile.findChildOfType(KtPrimaryConstructor::class.java) ?: return
+        val typeRef = constructor.findChildrenOfType(KtTypeReference::class.java).firstOrNull f@{
+            it.text == "View"
+        } ?: return
+
+        val newBindingParameter = psiFactory.createParameter(bindingClassName)
+        project.runWriteCommand {
+            typeRef.replace(newBindingParameter)
+        }
+    }
+
+    private fun findLayoutResName() {
+        val annotation = ktFile.findChildrenOfType(KtAnnotationEntry::class.java)
+        val layoutInVH = annotation.firstOrNull { it.text.contains("layoutInVH", ignoreCase = true) } ?: return
+        layoutResName = layoutInVH.findChildOfType(KtLiteralStringTemplateEntry::class.java)?.text ?: ""
+        val newString = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, layoutResName)
+        bindingClassName = "${newString}Binding"
+
+        project.runWriteCommand {
+            layoutInVH.delete()
+        }
     }
 
     private fun testVirtualFiles() {
@@ -90,6 +125,7 @@ class RefactorFragmentKotlin : AnAction() {
         val typeEntry = psiFactory.createSuperTypeEntry(bindingClassName)
         val typeProjections = superTypes.findChildrenOfType(KtTypeProjection::class.java)
         val lastGenericType = typeProjections.getOrNull(typeProjections.size - 1)
+        inputTypeClassName = lastGenericType?.text ?: ""
         project.runWriteCommand {
             lastGenericType?.add(comma)
             lastGenericType?.add(typeEntry)
@@ -119,8 +155,8 @@ class RefactorFragmentKotlin : AnAction() {
     private fun updateImportBaseClass() {
         val imports = ktFile.findChildrenOfType(KtImportDirective::class.java)
         val baseClassImport =
-            imports.filter { it.text.contains("com.mhealth.core.mvvm.BaseMVVMFragment") }.firstOrNull() ?: return
-        val newBaseClassPath = "com.mhealth.core.mvvm.v2.BaseMVVMFragment"
+            imports.filter { it.text.contains("com.mhealth.core.ui.adapter.BaseViewHolder") }.firstOrNull() ?: return
+        val newBaseClassPath = "com.mhealth.core.ui.adapter.v4.BaseViewHolder"
         val importPath = ImportPath(FqName(newBaseClassPath), false, null)
         val newImport = psiFactory.createImportDirective(importPath)
         project.runWriteCommand {
@@ -128,30 +164,17 @@ class RefactorFragmentKotlin : AnAction() {
         }
     }
 
-    private fun updateInitFragmentTools() {
-        val properties = ktFile.findChildrenOfType(KtFunction::class.java)
-        val initFragmentToolProperty = properties.firstOrNull { it.name == "initFragmentTools" } ?: return
-        val propertyText = initFragmentToolProperty.text
-        val foundText = "R.layout."
-        val index1 = propertyText.indexOf(foundText)
-        val index2 = propertyText.indexOf(" ", index1)
-        val layoutFileName = propertyText.substring(index1 + foundText.length, index2)
-        val newString = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, layoutFileName)
-        bindingClassName = "${newString}Binding"
+    private fun updateFuncBindView() {
+        val properties = ktFile.findChildrenOfType(KtProperty::class.java)
+        val bindViewVal = properties.firstOrNull { it.name == "bindView" } ?: return
+        val lambdaExpression = bindViewVal.findChildOfType(KtLambdaExpression::class.java) ?: return
+        val bodyText = lambdaExpression.text ?: return
 
-        project.runWriteCommand { initFragmentToolProperty.delete() }
-    }
-
-    private fun updateFuncSetupViews() {
-        val functions = ktFile.findChildrenOfType(KtNamedFunction::class.java)
-        val setupViewFunction = functions.firstOrNull { it.name == "setupViews" } ?: return
-        val bodyText = setupViewFunction.bodyExpression?.text ?: return
-
-        val funcDeclaredText = "override val setupViews: (${bindingClassName}.() -> Unit) ="
+        val funcDeclaredText = "override val bindView: ${bindingClassName}.(item : $inputTypeClassName) -> Unit ="
         val propertyText = funcDeclaredText + bodyText
         val property = psiFactory.createProperty(propertyText)
         project.runWriteCommand {
-            setupViewFunction.replace(property)
+            bindViewVal.replace(property)
         }
 
         logger.info("ToanTK updateFuncSetupViews")

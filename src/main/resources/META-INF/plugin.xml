@@ -23,6 +23,12 @@
             <add-to-group group-id="WindowMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt PERIOD"/>
         </action>
+        <action id="com.github.toantk238.sampleintellijplugin.edit.refactor_view_holder"
+                class="com.github.toantk238.sampleintellijplugin.actions.RefactorViewHolderKotlin"
+                text="Refactor View Holder"
+                description="To refactor View Holder">
+            <add-to-group group-id="WindowMenu" anchor="last"/>
+        </action>
         <action id="com.github.toantk238.sampleintellijplugin.edit.convert_lower_underscore_to_camel_case"
                 class="com.github.toantk238.sampleintellijplugin.actions.ConvertLowUnderToCamelCase"
                 text="Convert Lower Underscore to CamelCase"

@@ -13,15 +13,15 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version kotlinVersion
     id("org.jetbrains.kotlin.kapt") version kotlinVersion
     // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
-    id("org.jetbrains.intellij") version "1.1.6"
+    id("org.jetbrains.intellij") version "1.5.3"
     // gradle-changelog-plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
-    id("org.jetbrains.changelog") version "1.3.0"
+    id("org.jetbrains.changelog") version "1.3.1"
     // detekt linter - read more: https://detekt.github.io/detekt/gradle.html
-    id("io.gitlab.arturbosch.detekt") version "1.18.1"
+    id("io.gitlab.arturbosch.detekt") version "1.20.0"
     // ktlint linter - read more: https://github.com/JLLeitschuh/ktlint-gradle
-    id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
     // dependency checker
-    id("com.github.ben-manes.versions") version "0.38.0"
+    id("com.github.ben-manes.versions") version "0.42.0"
 }
 
 group = properties("pluginGroup")
@@ -33,6 +33,7 @@ repositories {
     jcenter()
     google()
 }
+
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.18.1")
 //    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.4.20")
@@ -60,9 +61,9 @@ detekt {
     buildUponDefaultConfig = true
 
     reports {
-        html.enabled = false
-        xml.enabled = false
-        txt.enabled = false
+        html.required.set(false)
+        xml.required.set(false)
+        txt.required.set(false)
     }
 }
 
@@ -88,17 +89,15 @@ tasks {
         untilBuild.set(properties("pluginUntilBuild"))
 
         // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
-        pluginDescription.set(
-            projectDir.resolve("README.md").readText().lines().run {
-                val start = "<!-- Plugin description -->"
-                val end = "<!-- Plugin description end -->"
+        pluginDescription.set(projectDir.resolve("README.md").readText().lines().run {
+            val start = "<!-- Plugin description -->"
+            val end = "<!-- Plugin description end -->"
 
-                if (!containsAll(listOf(start, end))) {
-                    throw GradleException("Plugin description section not found in README.md:\n$start ... $end")
-                }
-                subList(indexOf(start) + 1, indexOf(end))
-            }.joinToString("\n").run { markdownToHTML(this) }
-        )
+            if (!containsAll(listOf(start, end))) {
+                throw GradleException("Plugin description section not found in README.md:\n$start ... $end")
+            }
+            subList(indexOf(start) + 1, indexOf(end))
+        }.joinToString("\n").run { markdownToHTML(this) })
 
         // Get the latest available change notes from the changelog file
         changeNotes.set(provider {
@@ -123,7 +122,7 @@ tasks {
 
     runIde {
         ideDir.set(File("/home/freesky1102/ProgramFiles/android-studio"))
-        configDir.set(File("/home/freesky1102/.config/Google/AndroidStudio2020.3"))
-        systemDir.set(File("/home/freesky1102/.cache/Google/AndroidStudio2020.3"))
+        configDir.set(File("/home/freesky1102/.config/Google/AndroidStudio2021.2"))
+        systemDir.set(File("/home/freesky1102/.cache/Google/AndroidStudio2021.2"))
     }
 }

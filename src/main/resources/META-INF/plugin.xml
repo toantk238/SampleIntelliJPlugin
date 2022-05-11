@@ -36,6 +36,12 @@
             <add-to-group group-id="WindowMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt COMMA"/>
         </action>
+        <action id="com.github.toantk238.sampleintellijplugin.edit.remove_databinding"
+                class="com.github.toantk238.sampleintellijplugin.actions.RemoveDataBindingFromXml"
+                text="Remove DataBinding from XML"
+                description="Remove DataBinding from XML">
+            <add-to-group group-id="WindowMenu" anchor="last"/>
+        </action>
     </actions>
 
     <!--    <applicationListeners>-->

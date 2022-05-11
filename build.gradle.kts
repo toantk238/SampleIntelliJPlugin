@@ -122,6 +122,7 @@ tasks {
 
     runIde {
         ideDir.set(File("/home/freesky1102/ProgramFiles/android-studio"))
+        jvmArgs = listOf("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005")
         configDir.set(File("/home/freesky1102/.config/Google/AndroidStudio2021.2"))
         systemDir.set(File("/home/freesky1102/.cache/Google/AndroidStudio2021.2"))
     }

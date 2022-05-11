@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>com.github.toantk238.sampleintellijplugin</id>
-    <name>SampleIntelliJPlugin</name>
+    <name>MaNaDr Android Ultimate</name>
     <vendor>toantk238</vendor>
 
     <!-- Product and plugin compatibility requirements -->

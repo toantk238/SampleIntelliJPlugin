@@ -1,1 +1,1 @@
-rootProject.name = "SampleIntelliJPlugin"
+rootProject.name = "MaNaDr Android Ultimate"

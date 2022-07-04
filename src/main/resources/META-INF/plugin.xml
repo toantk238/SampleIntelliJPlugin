@@ -42,6 +42,12 @@
                 description="Remove DataBinding from XML">
             <add-to-group group-id="WindowMenu" anchor="last"/>
         </action>
+        <action id="com.github.toantk238.sampleintellijplugin.edit.convert_java_to_mvvm_kotlin"
+                class="com.github.toantk238.sampleintellijplugin.actions.ConvertJavaToKotlinAction"
+                text="Convert Java MVP to Kotlin MVVM"
+                description="Convert Java MVP to Kotlin MVVM">
+            <add-to-group group-id="WindowMenu" anchor="last"/>
+        </action>
     </actions>
 
     <!--    <applicationListeners>-->

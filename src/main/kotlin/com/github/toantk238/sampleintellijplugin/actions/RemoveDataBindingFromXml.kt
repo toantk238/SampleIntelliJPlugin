@@ -5,14 +5,11 @@ import com.github.toantk238.sampleintellijplugin.util.runWriteCommand
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlToken
 
 class RemoveDataBindingFromXml : AnAction() {
-
-    private val logger by lazy { Logger.getInstance("ToanTK") }
 
     override fun actionPerformed(e: AnActionEvent) {
 

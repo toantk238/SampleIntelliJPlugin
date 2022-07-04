@@ -8,7 +8,6 @@ import com.google.common.base.CaseFormat
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
@@ -21,8 +20,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ImportPath
 
 class RefactorFragmentKotlin : AnAction() {
-
-    private val logger by lazy { Logger.getInstance("ToanTK") }
 
     private var virtualFile: VirtualFile? = null
 

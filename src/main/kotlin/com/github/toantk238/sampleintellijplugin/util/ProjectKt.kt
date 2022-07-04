@@ -8,3 +8,5 @@ fun Project.runWriteCommand(block: () -> Unit) {
         block.invoke()
     }
 }
+
+const val LANG_JAVA_ID = "JAVA"

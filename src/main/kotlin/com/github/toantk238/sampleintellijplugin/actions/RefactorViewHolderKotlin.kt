@@ -8,11 +8,11 @@ import com.google.common.base.CaseFormat
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider
 import org.jetbrains.kotlin.idea.util.projectStructure.getModule
@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ImportPath
 
 class RefactorViewHolderKotlin : AnAction() {
-
-    private val logger by lazy { Logger.getInstance("ToanTK") }
 
     private var virtualFile: VirtualFile? = null
 
@@ -62,6 +60,14 @@ class RefactorViewHolderKotlin : AnAction() {
         // Watch current caret element
         val pos = editor.caretModel.offset
         val temp = ktFile.findElementAt(pos)
+
+        val parentRef = temp?.parentOfType<KtNameReferenceExpression>(true)
+
+        val rootRef = parentRef?.reference?.resolve()
+        if (rootRef is KtClass) {
+            val file = rootRef.containingFile as KtFile
+            logger.info("ASD")
+        }
 
         logger.info("ToanTK got Kt File done")
 //        updateInitFragmentTools()

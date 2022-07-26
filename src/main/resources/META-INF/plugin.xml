@@ -13,6 +13,11 @@
         <applicationService
                 serviceImplementation="com.github.toantk238.sampleintellijplugin.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.toantk238.sampleintellijplugin.services.MyProjectService"/>
+        <toolWindow
+                factoryClass="com.github.toantk238.sampleintellijplugin.toolwindow.TestWindowFactory"
+                id="com.github.toantk238.test_window"
+                secondary="true" icon="AllIcons.General.Modified" anchor="right"
+        />
     </extensions>
 
     <actions>
@@ -26,7 +31,7 @@
         <action id="com.github.toantk238.sampleintellijplugin.edit.refactor_view_holder"
                 class="com.github.toantk238.sampleintellijplugin.actions.RefactorViewHolderKotlin"
                 text="Refactor View Holder"
-                description="To refactor View Holder">
+                description="To refactor view holder">
             <add-to-group group-id="WindowMenu" anchor="last"/>
         </action>
         <action id="com.github.toantk238.sampleintellijplugin.edit.convert_lower_underscore_to_camel_case"

@@ -79,6 +79,9 @@ class RefactorViewHolderKotlin : AnAction() {
 //        convertAllVariablesFromLowerUnderscoreToCamelCase()
 
         findLayoutResName()
+
+        if (!::bindingClassName.isInitialized) return
+
         addImportBindingClass()
         deleteSyntheticImports()
         updateConstructor()
@@ -102,14 +105,31 @@ class RefactorViewHolderKotlin : AnAction() {
 
     private fun findLayoutResName() {
         val annotation = ktFile.findChildrenOfType(KtAnnotationEntry::class.java)
-        val layoutInVH = annotation.firstOrNull { it.text.contains("layoutInVH", ignoreCase = true) } ?: return
-        layoutResName = layoutInVH.findChildOfType(KtLiteralStringTemplateEntry::class.java)?.text ?: ""
+        val layoutInVH = annotation.firstOrNull { it.text.contains("layoutInVH", ignoreCase = true) }
+        if (layoutInVH != null) {
+            layoutResName = layoutInVH.findChildOfType(KtLiteralStringTemplateEntry::class.java)?.text ?: ""
+            val newString = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, layoutResName)
+            bindingClassName = "${newString}Binding"
+
+            project.runWriteCommand {
+                layoutInVH.delete()
+            }
+            return
+        }
+
+        val imports = ktFile.findChildrenOfType(KtImportDirective::class.java)
+        val syntheticImport = imports.lastOrNull {
+            it.text.contains("kotlinx.android.synthetic")
+        } ?: return
+
+        val importText = syntheticImport.text
+        val lastIndex = importText.indexOf(".view.*")
+        val lastDotIndex = importText.lastIndexOf(".", lastIndex - 1)
+        layoutResName = importText.substring(lastDotIndex + 1, lastIndex)
         val newString = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, layoutResName)
         bindingClassName = "${newString}Binding"
 
-        project.runWriteCommand {
-            layoutInVH.delete()
-        }
+        logger.debug("ASD")
     }
 
     private fun testVirtualFiles() {

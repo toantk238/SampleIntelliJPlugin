@@ -18,6 +18,7 @@
                 id="com.github.toantk238.test_window"
                 secondary="true" icon="AllIcons.General.Modified" anchor="right"
         />
+        <applicationService serviceImplementation="com.github.toantk238.sampleintellijplugin.toolwindow.TestToolState"/>
     </extensions>
 
     <actions>

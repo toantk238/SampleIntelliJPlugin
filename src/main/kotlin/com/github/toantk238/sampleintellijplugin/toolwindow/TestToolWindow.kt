@@ -1,13 +1,16 @@
 package com.github.toantk238.sampleintellijplugin.toolwindow
 
+import com.github.toantk238.sampleintellijplugin.actions.logger
+import com.intellij.openapi.fileChooser.FileChooser
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.wm.ToolWindow
-import javax.swing.JCheckBox
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.JTextField
+import javax.swing.*
 
 class TestToolWindow(
-    val toolWindow: ToolWindow
+    private val toolWindow: ToolWindow,
+    private val project: Project
 ) {
 
     private lateinit var mainPanel: JPanel
@@ -22,5 +25,45 @@ class TestToolWindow(
 
     private lateinit var frgBuilderModule: JTextField
 
+    private lateinit var selectVMBtn: JButton
+
+    private lateinit var vmModuleField: JTextField
+
+    private lateinit var selectVMModuleBtn: JButton
+
+    private lateinit var createAllBtn: JButton
+
     fun getMainPanel() = mainPanel
+
+    init {
+        setup()
+    }
+
+    private fun setup() {
+        selectVMBtn.addActionListener { onClickSelectVMClass() }
+        selectVMModuleBtn.addActionListener { onClickSelectVMModuleClass() }
+        createAllBtn.addActionListener { onClickCreateAll() }
+
+        val state = TestToolState.INSTANCE
+        vmModuleField.text = state.vmModuleClass
+    }
+
+    private fun onClickSelectVMModuleClass() {
+        val descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor("kt")
+        descriptor.setRoots(project.guessProjectDir())
+        val selectFile = FileChooser.chooseFile(descriptor, project, null)
+        logger.debug("")
+    }
+
+    private fun onClickSelectVMClass() {
+        val descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor("kt")
+        descriptor.setRoots(project.guessProjectDir())
+        val selectFile = FileChooser.chooseFile(descriptor, project, null)
+        logger.debug("")
+    }
+
+    private fun onClickCreateAll() {
+        val state = TestToolState.INSTANCE
+        state.vmModuleClass = vmModuleField.text.trim()
+    }
 }

@@ -13,7 +13,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version kotlinVersion
     id("org.jetbrains.kotlin.kapt") version kotlinVersion
     // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
-    id("org.jetbrains.intellij") version "1.7.0"
+    id("org.jetbrains.intellij") version "1.9.0"
     // gradle-changelog-plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
     id("org.jetbrains.changelog") version "1.3.1"
     // detekt linter - read more: https://detekt.github.io/detekt/gradle.html
@@ -35,10 +35,10 @@ repositories {
 }
 
 dependencies {
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.18.1")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0")
 //    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.4.20")
 //    implementation("org.jetbrains.kotlin:kotlin-compiler:1.3.72")
-    compileOnly("com.android.tools.build:gradle:7.2.1")
+    compileOnly("com.android.tools.build:gradle:7.3.0")
 }
 
 // Configure gradle-intellij-plugin plugin.

@@ -53,7 +53,7 @@ class ConvertJavaToKotlinAction : AnAction() {
         }
 
         val results = JavaToKotlinAction.convertFiles(
-            javaFiles = inputFiles, project = project,
+            files = inputFiles, project = project,
             module = module, askExternalCodeProcessing = false,
             enableExternalCodeProcessing = false
         )

@@ -1,6 +1,5 @@
 package com.github.toantk238.sampleintellijplugin.actions
 
-import com.android.tools.idea.npw.project.getPackageForApplication
 import com.github.toantk238.sampleintellijplugin.util.findChildOfType
 import com.github.toantk238.sampleintellijplugin.util.findChildrenOfType
 import com.github.toantk238.sampleintellijplugin.util.runWriteCommand
@@ -138,7 +137,7 @@ class RefactorViewHolderKotlin : AnAction() {
         val facet = AndroidFacet.getInstance(module)
         val moduleManager = ModuleManager.getInstance(project)
         val p = ProjectRootManager.getInstance(project)
-        packageName = facet?.getPackageForApplication() ?: ""
+        packageName = sourceProvider?.getApplicationPackage() ?: ""
 
         logger.info("ToanTK got Kt File done")
     }

@@ -18,7 +18,7 @@ plugins {
     // gradle-changelog-plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
     id("org.jetbrains.changelog") version "2.0.0"
     // detekt linter - read more: https://detekt.github.io/detekt/gradle.html
-    id("io.gitlab.arturbosch.detekt") version "1.21.0"
+    id("io.gitlab.arturbosch.detekt") version "1.22.0"
     // ktlint linter - read more: https://github.com/JLLeitschuh/ktlint-gradle
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     // dependency checker
@@ -36,10 +36,10 @@ repositories {
 }
 
 dependencies {
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0")
 //    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.4.20")
 //    implementation("org.jetbrains.kotlin:kotlin-compiler:1.3.72")
-    compileOnly("com.android.tools.build:gradle:7.3.0")
+    compileOnly("com.android.tools.build:gradle:7.3.1")
 }
 
 // Configure gradle-intellij-plugin plugin.
@@ -130,9 +130,10 @@ tasks {
     }
 
     runIde {
-        ideDir.set(File("/home/freesky1102/ProgramFiles/android-studio"))
+        val homePath = System.getenv("HOME")
+        ideDir.set(File("$homePath/ProgramFiles/android-studio"))
         jvmArgs = listOf("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005")
-        configDir.set(File("/home/freesky1102/.config/Google/AndroidStudio2021.3"))
-        systemDir.set(File("/home/freesky1102/.cache/Google/AndroidStudio2021.3"))
+        configDir.set(File("$homePath/.config/Google/AndroidStudio2021.3"))
+        systemDir.set(File("$homePath/.cache/Google/AndroidStudio2021.3"))
     }
 }

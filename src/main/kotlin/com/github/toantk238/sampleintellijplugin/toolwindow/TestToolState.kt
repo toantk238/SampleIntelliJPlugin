@@ -7,8 +7,7 @@ import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
 
 @State(
-    name = "org.intellij.sdk.settings.TestToolState",
-    storages = [Storage("rock_test.xml")]
+    name = "org.intellij.sdk.settings.TestToolState", storages = [Storage("rock_test.xml")]
 )
 class TestToolState : PersistentStateComponent<TestToolState> {
 
@@ -22,7 +21,9 @@ class TestToolState : PersistentStateComponent<TestToolState> {
 
     companion object {
 
-        val INSTANCE by lazy { ApplicationManager.getApplication().getService(TestToolState::class.java) }
+        val INSTANCE: TestToolState by lazy {
+            ApplicationManager.getApplication().getService(TestToolState::class.java)
+        }
 
     }
 }

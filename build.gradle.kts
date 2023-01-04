@@ -135,5 +135,6 @@ tasks {
         jvmArgs = listOf("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005")
         configDir.set(File("$homePath/.config/Google/AndroidStudio2021.3"))
         systemDir.set(File("$homePath/.cache/Google/AndroidStudio2021.3"))
+        pluginsDir.set(File("$homePath/.local/share/Google/AndroidStudio2021.3"))
     }
 }

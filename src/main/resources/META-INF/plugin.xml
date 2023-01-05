@@ -54,6 +54,14 @@
                 description="Convert Java MVP to Kotlin MVVM">
             <add-to-group group-id="WindowMenu" anchor="last"/>
         </action>
+
+        <group id="manadr.pub.actions.context.menu.group">
+            <action id="manadr.mvvm.create_fragment"
+                    class="com.github.toantk238.sampleintellijplugin.actions.CreateFragmentAction"/>
+            <separator/>
+            <!--            <add-to-group group-id="EditorPopupMenu" anchor="first"/>-->
+            <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
+        </group>
     </actions>
 
     <!--    <applicationListeners>-->

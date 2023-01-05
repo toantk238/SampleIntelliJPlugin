@@ -60,7 +60,8 @@
                     class="com.github.toantk238.sampleintellijplugin.actions.CreateFragmentAction"/>
             <separator/>
             <!--            <add-to-group group-id="EditorPopupMenu" anchor="first"/>-->
-            <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
+            <!--            <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>-->
+            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
         </group>
     </actions>
 

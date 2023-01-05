@@ -1,22 +1,21 @@
 package com.github.toantk238.sampleintellijplugin.actions
 
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.github.toantk238.sampleintellijplugin.MyBundle
+import com.intellij.ide.actions.CreateFileFromTemplateAction
+import com.intellij.ide.actions.CreateFileFromTemplateDialog
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDirectory
+import org.jetbrains.kotlin.idea.KotlinIcons
 
-class CreateFragmentAction : AnAction() {
+class CreateFragmentAction : CreateFileFromTemplateAction(
+    MyBundle.message("action.create_arch_fragment"), "Description", null
+) {
 
-    override fun actionPerformed(e: AnActionEvent) {
-        logger.debug("ASD")
+    override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
+        builder.setTitle("MVVM Fragment").addKind("Kotlin file", KotlinIcons.FILE, "Kotlin file");
     }
 
-    override fun update(e: AnActionEvent) {
-        super.update(e)
-
-        val project = e.project
-        val psiFile = e.getData(CommonDataKeys.PSI_FILE)
-        e.presentation.isVisible = false
-        e.presentation.isEnabled = false
-        logger.debug("ASD")
+    override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?): String {
+        return "Create MaNaDrFragment Action Name"
     }
 }

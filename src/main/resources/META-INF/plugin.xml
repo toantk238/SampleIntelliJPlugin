@@ -1,21 +1,20 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.toantk238.sampleintellijplugin</id>
-    <name>MaNaDr Android Ultimate</name>
-    <vendor>toantk238</vendor>
+    <id>org.jetbrains.plugins.template</id>
+    <name>IntelliJ Platform Plugin Template</name>
+    <vendor>JetBrains</vendor>
 
-    <!-- Product and plugin compatibility requirements -->
-    <!-- https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
-    <depends>org.jetbrains.kotlin</depends>
-    <depends>org.jetbrains.android</depends>
+
+    <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
+        <toolWindow factoryClass="org.jetbrains.plugins.template.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
         <applicationService
                 serviceImplementation="com.github.toantk238.sampleintellijplugin.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.toantk238.sampleintellijplugin.services.MyProjectService"/>
     </extensions>
-
-    <actions>
+     <actions>
         <action id="com.github.toantk238.sampleintellijplugin.edit.kotlin"
                 class="com.github.toantk238.sampleintellijplugin.actions.RefactorFragmentKotlin"
                 text="Refactor Fragment"
@@ -44,8 +43,7 @@
         </action>
     </actions>
 
-    <!--    <applicationListeners>-->
-    <!--        <listener class="com.github.toantk238.sampleintellijplugin.listeners.MyProjectManagerListener"-->
-    <!--                  topic="com.intellij.openapi.project.ProjectManagerListener"/>-->
-    <!--    </applicationListeners>-->
+    <applicationListeners>
+        <listener class="org.jetbrains.plugins.template.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
+    </applicationListeners>
 </idea-plugin>

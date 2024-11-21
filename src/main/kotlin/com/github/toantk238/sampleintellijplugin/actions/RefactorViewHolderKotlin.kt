@@ -1,6 +1,6 @@
 package com.github.toantk238.sampleintellijplugin.actions
 
-import com.android.tools.idea.npw.project.getPackageForApplication
+import com.android.tools.idea.namespacing
 import com.github.toantk238.sampleintellijplugin.util.findChildOfType
 import com.github.toantk238.sampleintellijplugin.util.findChildrenOfType
 import com.github.toantk238.sampleintellijplugin.util.runWriteCommand
@@ -14,7 +14,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.android.facet.AndroidFacet
-import org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider
 import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -108,11 +107,11 @@ class RefactorViewHolderKotlin : AnAction() {
 
     private fun testVirtualFiles() {
         val module = virtualFile?.getModule(project) ?: return
-        val sourceProvider = AndroidModuleInfoProvider.getInstance(module)
+//        val sourceProvider = AndroidModuleInfoProvider.getInstance(module)
         val facet = AndroidFacet.getInstance(module)
         val moduleManager = ModuleManager.getInstance(project)
         val p = ProjectRootManager.getInstance(project)
-        packageName = facet?.getPackageForApplication() ?: ""
+        packageName = facet?.namespacing?.name ?: ""
 
         logger.info("ToanTK got Kt File done")
     }

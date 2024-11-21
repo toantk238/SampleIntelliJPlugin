@@ -22,6 +22,7 @@ kotlin {
 // Configure project's dependencies
 repositories {
     mavenCentral()
+    google()
 
     // IntelliJ Platform Gradle Plugin Repositories Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-repositories-extension.html
     intellijPlatform {
@@ -38,10 +39,10 @@ dependencies {
         create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
 
         // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
-        bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
+        bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',').map { it.trim() } })
 
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
-        plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
+        plugins(providers.gradleProperty("platformPlugins").map { it.split(',').map { it.trim() } })
 
         instrumentationTools()
         pluginVerifier()
@@ -98,7 +99,8 @@ intellijPlatform {
         // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
         // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
         // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
-        channels = providers.gradleProperty("pluginVersion").map { listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }) }
+        channels = providers.gradleProperty("pluginVersion")
+            .map { listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }) }
     }
 
     pluginVerification {
@@ -157,6 +159,6 @@ intellijPlatformTesting {
 }
 
 // ideDir.set(File("/home/freesky1102/ProgramFiles/android-studio"))
-   //     jvmArgs = listOf("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005")
-    //    configDir.set(File("/home/freesky1102/.config/Google/AndroidStudio2021.2"))
-      //  systemDir.set(File("/home/freesky1102/.cache/Google/AndroidStudio2021.2"))
+//     jvmArgs = listOf("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005")
+//    configDir.set(File("/home/freesky1102/.config/Google/AndroidStudio2021.2"))
+//  systemDir.set(File("/home/freesky1102/.cache/Google/AndroidStudio2021.2"))

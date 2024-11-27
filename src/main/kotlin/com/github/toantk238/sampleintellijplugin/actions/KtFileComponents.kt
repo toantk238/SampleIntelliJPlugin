@@ -33,7 +33,7 @@ class KtFileComponents(
         val itsText = it.text ?: ""
 
         if (!itsText.contains("_")) return true
-        if (itsText.toUpperCase() == itsText) return true // avoid constant variables
+        if (itsText.uppercase() == itsText) return true // avoid constant variables
 
         // Don't convert those references to Android resource ( R.layout, R.drawable, so on )
         val dotParent = PsiTreeUtil.getParentOfType(it, KtDotQualifiedExpression::class.java)

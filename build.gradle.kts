@@ -3,11 +3,10 @@ import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
-    id("java") // Java support
     alias(libs.plugins.kotlin) // Kotlin support
     alias(libs.plugins.intelliJPlatform) // IntelliJ Platform Gradle Plugin
     alias(libs.plugins.changelog) // Gradle Changelog Plugin
-    alias(libs.plugins.qodana) // Gradle Qodana Plugin
+//    alias(libs.plugins.qodana) // Gradle Qodana Plugin
     alias(libs.plugins.kover) // Gradle Kover Plugin
 }
 
@@ -16,7 +15,12 @@ version = providers.gradleProperty("pluginVersion").get()
 
 // Set the JVM language level used to build the project.
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 // Configure project's dependencies
@@ -36,15 +40,19 @@ dependencies {
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
-        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
+        bundledPlugin("org.jetbrains.android")
+        instrumentationTools()
+        androidStudio("2024.3.1.2")
+//        local("/home/freesky1102/ProgramFiles/android-studio")
+//        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
 
         // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
-        bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',').map { it.trim() } })
+//        bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',').map { it.trim() } })
 
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
-        plugins(providers.gradleProperty("platformPlugins").map { it.split(',').map { it.trim() } })
+//        plugins(providers.gradleProperty("platformPlugins").map { it.split(',').map { it.trim() } })
 
-        instrumentationTools()
+//        instrumentationTools()
         pluginVerifier()
         zipSigner()
         testFramework(TestFrameworkType.Platform)
@@ -84,7 +92,7 @@ intellijPlatform {
 
         ideaVersion {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
-            untilBuild = providers.gradleProperty("pluginUntilBuild")
+            untilBuild = provider { null }
         }
     }
 
@@ -137,10 +145,21 @@ tasks {
     }
 }
 
+val localIdePath: String? by project.extra
+localIdePath?.let {
+    val runLocalIde by intellijPlatformTesting.runIde.registering {
+        localPath.set(file(it))
+    }
+}
+
 intellijPlatformTesting {
     runIde {
         register("runIdeForUiTests") {
             task {
+                localPath.set(file("/home/freesky1102/ProgramFiles/android-studio"))
+                //                sandboxPluginsDirectory.set(file("/home/freesky1102/ProgramFiles/android-studio/plugins"))
+                //                sandboxSystemDirectory.set(file("/home/freesky1102/.cache/Google/AndroidStudio2024.2"))
+                //                sandboxConfigDirectory.set(file("/home/freesky1102/.config/Google/AndroidStudio2024.2"))
                 jvmArgumentProviders += CommandLineArgumentProvider {
                     listOf(
                         "-Drobot-server.port=8082",
